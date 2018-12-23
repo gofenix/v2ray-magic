@@ -1,0 +1,61 @@
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "tag": "socks-inbound",
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": false,
+        "ip": "127.0.0.1"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "blocked"
+    }
+  ],
+
+  "dns": {
+    "hosts": {
+      "domain:baidu.com": "127.0.0.1"
+    },
+    "servers": [
+      {
+        "address": "114.114.114.114",
+        "port": 53,
+        "domains": [
+          "domain:v2ray.com"
+        ]
+      },
+      "8.8.8.8",
+      "1.1.1.1",
+      "localhost"
+    ]
+  },
+  "policy": {
+    "levels": {
+      "0": {
+        "uplinkOnly": 0,
+        "downlinkOnly": 0
+      }
+    },
+    "system": {
+      "statsInboundUplink": false,
+      "statsInboundDownlink": false
+    }
+  },
+  "other": {}
+}
