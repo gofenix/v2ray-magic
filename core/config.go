@@ -1,11 +1,12 @@
 package core
 
 import (
-	"io"
-	"strings"
-
+	"encoding/json"
 	"github.com/golang/protobuf/proto"
-	"v2ray.com/core/common"
+	"io"
+	"log"
+	"strings"
+	//"v2ray.com/core/common"
 	"v2ray.com/core/common/buf"
 )
 
@@ -26,6 +27,7 @@ var (
 
 // RegisterConfigLoader add a new ConfigLoader.
 func RegisterConfigLoader(format *ConfigFormat) error {
+
 	name := strings.ToLower(format.Name)
 	if _, found := configLoaderByName[name]; found {
 		return newError(format.Name, " already registered.")
@@ -40,6 +42,9 @@ func RegisterConfigLoader(format *ConfigFormat) error {
 		configLoaderByExt[lext] = format
 	}
 
+	log.Println(configLoaderByName)
+	log.Println(configLoaderByExt)
+
 	return nil
 }
 
@@ -53,6 +58,7 @@ func getExtension(filename string) string {
 
 // LoadConfig loads config with given format from given source.
 func LoadConfig(formatName string, filename string, input io.Reader) (*Config, error) {
+	log.Println(formatName, filename, input)
 	ext := getExtension(filename)
 	if len(ext) > 0 {
 		if f, found := configLoaderByExt[ext]; found {
@@ -68,6 +74,7 @@ func LoadConfig(formatName string, filename string, input io.Reader) (*Config, e
 }
 
 func loadProtobufConfig(input io.Reader) (*Config, error) {
+	log.Println("log proto config")
 	config := new(Config)
 	data, err := buf.ReadAllToBytes(input)
 	if err != nil {
@@ -79,10 +86,31 @@ func loadProtobufConfig(input io.Reader) (*Config, error) {
 	return config, nil
 }
 
-func init() {
-	common.Must(RegisterConfigLoader(&ConfigFormat{
-		Name:      "Protobuf",
-		Extension: []string{"pb"},
-		Loader:    loadProtobufConfig,
-	}))
+func loadJSONConfig(input io.Reader) (*Config, error) {
+	log.Println("log json config")
+	config := new(Config)
+	data, err := buf.ReadAllToBytes(input)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(data, config); err != nil {
+		return nil, err
+	}
+	return config, nil
 }
+//
+//func init() {
+//	common.Must(RegisterConfigLoader(&ConfigFormat{
+//		Name:      "Protobuf",
+//		Extension: []string{"pb"},
+//		Loader:    loadProtobufConfig,
+//	}))
+//}
+
+//func init() {
+//	common.Must(RegisterConfigLoader(&ConfigFormat{
+//		Name:      "Json",
+//		Extension: []string{"json"},
+//		Loader:    loadJSONConfig,
+//	}))
+//}

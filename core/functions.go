@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"context"
+	"log"
 
 	"v2ray.com/core/common"
 	"v2ray.com/core/common/net"
@@ -23,6 +24,7 @@ func CreateObject(v *Instance, config interface{}) (interface{}, error) {
 //
 // v2ray:api:stable
 func StartInstance(configFormat string, configBytes []byte) (*Instance, error) {
+	log.Println("start")
 	config, err := LoadConfig(configFormat, "", bytes.NewReader(configBytes))
 	if err != nil {
 		return nil, err

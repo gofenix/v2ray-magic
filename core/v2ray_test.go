@@ -1,6 +1,7 @@
 package core_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	proto "github.com/golang/protobuf/proto"
@@ -85,6 +86,18 @@ func TestV2RayClose(t *testing.T) {
 	common.Must(err)
 
 	server, err := StartInstance("protobuf", cfgBytes)
+	common.Must(err)
+	server.Close()
+}
+
+func TestJSONV2RayClose(t *testing.T) {
+
+	config := &Config{}
+
+	cfgBytes, err := json.Marshal(config)
+	common.Must(err)
+
+	server, err := StartInstance("json", cfgBytes)
 	common.Must(err)
 	server.Close()
 }
